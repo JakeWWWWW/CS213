@@ -105,6 +105,12 @@ uint16_t calculate_checksum(uint8_t* input_data, size_t input_len) {
   // Calculate a checksum over input_data
   // Return the checksum value
 
+  uint16_t checksum = 0;
+  for (size_t i = 0; i<input_len;i++){
+    checksum+=input_data[i];
+  }
+  return checksum;
+
   return 0;
 }
 
@@ -114,7 +120,13 @@ uint16_t lfsr_step(uint16_t oldstate) {
   // Calculate the new LFSR state given previous state
   // Return the new LFSR state
 
-  return 0;
+  uint16_t xor1 = (oldstate>>6) ^ oldstate;
+  uint16_t xor2 = (oldstate>>9) ^ xor1;
+  uint16_t xor3 = (oldstate>>13) ^ xor2;
+
+  uint16_t newstate = (oldstate >> 1) + (xor3<<15);
+
+  return newstate;
 }
 
 void decrypt_data(uint8_t* input_data, size_t input_len,

@@ -336,6 +336,18 @@ int main(void) {
     return 1;
   }
 
+  result = example_test();
+  if (result !=0){
+    printf("ERROR: example_test failed\n");
+    return 1;
+  }
+
+  result = test_lfsr_step();
+  if (result !=0){
+    printf("ERROR: test_lfsr_step failed\n");
+    return 1;
+  }
+
   printf("All tests passed successfully!\n");
   return 0;
 }
