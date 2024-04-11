@@ -33,6 +33,53 @@ void parse_header(uint8_t* input_data, size_t input_len, packlab_config_t* confi
   // Set the is_valid field of config to false if the header is invalid
   // or input_len (length of the input_data) is shorter than expected
 
+  //Checking validity
+  bool magicBytesCorrect = input_data[0] == 0x02 && input_data[1] == 0x13;
+  bool versionCorrect = input_data[2] == 0x02;
+  if (magicBytesCorrect && versionCorrect){
+    config->is_valid=true;
+  }else{
+    config->is_valid=false;
+    return;
+  }
+  //
+  //Decoding Flags
+
+  //Compressed?
+  uint8_t compressedMask = 0x80; //0b10000000
+  if ((input_data[3] & compressedMask) == compressedMask){
+    config->is_compressed=true;
+  }else{
+    config->is_compressed=false;
+  }
+
+  //Encrypted?
+  uint8_t encryptedMask = 0x40;//0b01000000
+  if ((input_data[3] & encryptedMask) == encryptedMask){
+    config->is_encrypted=true;
+  }else{
+    config->is_encrypted=false;
+  }
+
+  //Checksummed?
+  uint8_t checksummedMask = 0x20;//0b00100000
+  if ((input_data[3] & checksummedMask) == checksummedMask){
+    config->is_checksummed=true;
+  }else{
+    config->is_checksummed=false;
+  }
+
+  //Pulling Dictionary Data
+  if (config->is_compressed){
+    memcpy(config->dictionary_data, &input_data[4],16);
+  }
+
+  //Pulling Checksum
+  if (config->is_checksummed){
+    config->checksum_value = ((uint16_t) input_data[20]>>2)+ input_data[21]; 
+  }
+
+
 }
 
 uint16_t calculate_checksum(uint8_t* input_data, size_t input_len) {
