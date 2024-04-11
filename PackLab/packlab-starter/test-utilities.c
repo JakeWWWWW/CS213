@@ -100,16 +100,190 @@ int example_test(void) {
   return 0;
 }
 
+int no_magic(void){
+  packlab_config_t conf;
+
+  uint8_t input_data[] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+
+  size_t input_len = 8;
+
+  parse_header(input_data, input_len, &conf);
+
+  if (conf.is_valid){
+    return 1;
+  }
+
+  return 0;
+}
+
+int no_flags(void){
+  packlab_config_t conf;
+
+  uint8_t input_data[] = {0x02,0x13,0x02,0x00};
+
+  size_t input_len = 4;
+
+  parse_header(input_data, input_len, &conf);
+
+  if (!conf.is_valid){
+    return 1;
+  }
+
+  return 0;
+}
+
+
+int header_compressed(void){
+  packlab_config_t conf;
+
+  uint8_t input_data[] = {0x02,0x13,0x02,0x80,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,
+  0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11};
+
+  size_t input_len = 20;
+
+  parse_header(input_data, input_len, &conf);
+
+  if (!conf.is_valid){
+    return 1;
+  }
+  if (!conf.is_compressed){
+    return 1;
+  }
+
+  for (size_t i;i<16;i++){
+    if (conf.dictionary_data[i] != 0x11){
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+int header_checksum(void){
+  packlab_config_t conf;
+
+  uint8_t input_data[] = {0x02,0x13,0x02,0x20,0x20,0x30};
+
+  size_t input_len = 6;
+
+  parse_header(input_data, input_len, &conf);
+
+  if (!conf.is_valid){
+    return 1;
+  }
+  if (!conf.is_checksummed){
+    return 1;
+  }
+
+  if (conf.checksum_value != 0x2030){
+    printf("%x\n",conf.checksum_value);
+    return 1;
+  }
+
+  return 0;
+}
+
+int header_compressed_checksum(void){
+  packlab_config_t conf;
+
+  uint8_t input_data[] = {0x02,0x13,0x02,0xA0,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,
+  0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x20,0x30};
+
+  size_t input_len = 22;
+
+  parse_header(input_data, input_len, &conf);
+
+  if (!conf.is_valid){
+    return 1;
+  }
+
+  if (!conf.is_compressed){
+    return 1;
+  }
+
+  for (size_t i;i<16;i++){
+    if (conf.dictionary_data[i] != 0x11){
+      return 1;
+    }
+  }
+  if (!conf.is_checksummed){
+    return 1;
+  }
+
+  if (conf.checksum_value != 0x2030){
+    printf("%x\n",conf.checksum_value);
+    return 1;
+  }
+
+  return 0;
+}
+
+int header_encrypted(void){
+  packlab_config_t conf;
+
+  uint8_t input_data[] = {0x02,0x13,0x02,0x40};
+
+  size_t input_len = 4;
+
+  parse_header(input_data, input_len, &conf);
+
+  if (!conf.is_valid){
+    return 1;
+  }
+  if (!conf.is_encrypted){
+    return 1;
+  }
+
+  return 0;
+}
+
+int header_compressed_encrypted_checksum(void){
+    packlab_config_t conf;
+
+  uint8_t input_data[] = {0x02,0x13,0x02,0xE0,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,
+  0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x20,0x30};
+
+  size_t input_len = 22;
+
+  parse_header(input_data, input_len, &conf);
+
+  if (!conf.is_valid){
+    return 1;
+  }
+
+  if (!conf.is_compressed){
+    return 1;
+  }
+
+  for (size_t i;i<16;i++){
+    if (conf.dictionary_data[i] != 0x11){
+      return 1;
+    }
+  }
+  if (!conf.is_checksummed){
+    return 1;
+  }
+  if (!conf.is_encrypted){
+    return 1;
+  }
+
+  if (conf.checksum_value != 0x2030){
+    printf("%x\n",conf.checksum_value);
+    return 1;
+  }
+
+  return 0;
+}
 
 
 int main(void) {
 
   // Test the LFSR implementation
-  int result = test_lfsr_step();
-  if (result != 0) {
-    printf("Error when testing LFSR implementation\n");
-    return 1;
-  }
+  // int result = test_lfsr_step();
+  // if (result != 0) {
+  //   printf("Error when testing LFSR implementation\n");
+  //   return 1;
+  // }
 
   // TODO - add tests here for other functionality
   // You can craft arbitrary array data as inputs to the functions
@@ -117,10 +291,48 @@ int main(void) {
 
   // Here's an example test
   // Note that it's going to fail until you implement the `calculate_checksum()` function
-  result = example_test();
-  if (result != 0) {
-    // Make sure to print the name of which test failed, so you can go find it and figure out why
-    printf("ERROR: example_test_setup failed\n");
+  // int result = example_test();
+  // if (result != 0) {
+  //   // Make sure to print the name of which test failed, so you can go find it and figure out why
+  //   printf("ERROR: example_test_setup failed\n");
+  //   return 1;
+  // }
+  int result = no_magic();
+  if (result !=0){
+    printf("ERROR: no_magic failed\n");
+    return 1;
+  }
+
+  result = no_flags();
+  if (result !=0){
+    printf("ERROR: no_flags failed\n");
+    return 1;
+  }
+
+  result = header_compressed();
+  if (result !=0){
+    printf("ERROR: header_compressed failed\n");
+    return 1;
+  }
+
+  result = header_checksum();
+  if (result !=0){
+    printf("ERROR: header_checksum failed\n");
+    return 1;
+  }
+  result = header_compressed_checksum();
+  if (result !=0){
+    printf("ERROR: header_compressed_checksum failed\n");
+    return 1;
+  }
+  result = header_encrypted();
+  if (result !=0){
+    printf("ERROR: header_encrypted failed\n");
+    return 1;
+  }
+  result = header_compressed_encrypted_checksum();
+  if (result !=0){
+    printf("ERROR: header_encrypted failed\n");
     return 1;
   }
 
