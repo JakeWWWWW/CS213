@@ -46,7 +46,7 @@ void parse_header(uint8_t* input_data, size_t input_len, packlab_config_t* confi
     config->is_valid=false;
     return;
   }
-  //
+  
   //Decoding Flags
 
   //Compressed?
