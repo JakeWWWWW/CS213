@@ -8,7 +8,7 @@
 #include <string.h>
 
 #include "unpack-utilities.h"
-//
+
 
 int test_lfsr_step(void) {
   // A properly created LFSR should do two things
