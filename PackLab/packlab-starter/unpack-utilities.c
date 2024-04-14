@@ -9,7 +9,7 @@
 
 #include "unpack-utilities.h"
 
-
+//
 // --- public functions ---
 
 void error_and_exit(const char* message) {
