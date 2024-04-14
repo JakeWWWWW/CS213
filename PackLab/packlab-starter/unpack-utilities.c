@@ -113,7 +113,7 @@ uint16_t calculate_checksum(uint8_t* input_data, size_t input_len) {
 
   return 0;
 }
-
+//
 uint16_t lfsr_step(uint16_t oldstate) {
 
   // TODO
