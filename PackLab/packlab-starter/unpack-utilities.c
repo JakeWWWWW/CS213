@@ -149,7 +149,29 @@ size_t decompress_data(uint8_t* input_data, size_t input_len,
   // TODO
   // Decompress input_data and write result to output_data
   // Return the length of the decompressed data
+  size_t outI=0;
+  for (size_t i = 0; i<input_len;i++){
+    if (input_data[i]!=0x07){
+      output_data[outI]=input_data[i];
+      outI++;
+    }else{
+      i++;
+      if (input_data[i]==0x00){
+        output_data[outI]=0x07;
+        outI++;
+      }else{
+        uint8_t reps = input_data[i]>>4;
+        uint8_t inDatI = input_data[i]<<4;
+        uint8_t dictIndex = inDatI>>4;
+        size_t cap = reps+outI;
+        for (; outI<cap;outI++){
+          output_data[outI]=dictionary_data[dictIndex];
+        }
+      }
+    }
+  }
 
-  return 0;
+
+  return outI;
 }
 
