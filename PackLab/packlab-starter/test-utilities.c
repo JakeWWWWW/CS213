@@ -343,6 +343,61 @@ int header_compressed_encrypted_checksum(void){
   return 0;
 }
 
+int decompress_test_1(void){
+  uint8_t input_data[] = {0x01,0x07,0x42};
+  uint8_t dictionary_data[] = {0x30,0x31,0x32,0x33,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+  size_t input_len = 3;
+  size_t output_len = 16;
+  uint8_t output_data[output_len];
+  size_t result = decompress_data(input_data,input_len,output_data,output_len,dictionary_data);
+  if (result!=5){
+    return 1;
+  }
+  uint8_t expected_output[] = {0x01,0x32,0x32,0x32,0x32};
+  for (size_t i = 0; i<5;i++){
+    if (output_data[i]!=expected_output[i]){
+      return 1;
+    }
+  }
+  return 0;
+}
+
+int literal_escape_byte(void){
+  uint8_t input_data[] = {0x01,0x07,0x00,0x05};
+  uint8_t dictionary_data[] = {0x30,0x31,0x32,0x33,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+  size_t input_len = 4;
+  size_t output_len = 16;
+  uint8_t output_data[output_len];
+  size_t result = decompress_data(input_data,input_len,output_data,output_len,dictionary_data);
+  if (result!=3){
+    return 1;
+  }
+  uint8_t expected_output[] = {0x01,0x07,0x05};
+  for (size_t i = 0; i<3;i++){
+    if (output_data[i]!=expected_output[i]){
+      return 1;
+    }
+  }
+  return 0;
+}
+int decompress_mega_test(void){
+  uint8_t input_data[] = {0x01,0x07,0x42,0x07,0x00,0x67,0x89,0x07,0x71,0x88,0x89};
+  uint8_t dictionary_data[] = {0x30,0x31,0x32,0x33,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+  size_t input_len = 11;
+  size_t output_len = 48;
+  uint8_t output_data[output_len];
+  size_t result = decompress_data(input_data,input_len,output_data,output_len,dictionary_data);
+  if (result!=17){
+    return 1;
+  }
+  uint8_t expected_output[] = {0x01,0x32,0x32,0x32,0x32,0x07,0x67,0x89,0x31,0x31,0x31,0x31,0x31,0x31,0x31,0x88,0x89};
+  for (size_t i = 0; i<17;i++){
+    if (output_data[i]!=expected_output[i]){
+      return 1;
+    }
+  }
+  return 0;
+}
 
 int main(void) {
 
@@ -413,6 +468,21 @@ int main(void) {
   result = test_lfsr_step();
   if (result !=0){
     printf("ERROR: test_lfsr_step failed\n");
+    return 1;
+  }
+  result = decompress_test_1();
+  if (result !=0){
+    printf("ERROR: decompress_test_1\n");
+    return 1;
+  }
+  result = literal_escape_byte();
+  if (result !=0){
+    printf("ERROR: literal_escape_byte\n");
+    return 1;
+  }
+  result = decompress_mega_test();
+  if (result !=0){
+    printf("ERROR: decompress_mega_test\n");
     return 1;
   }
 
