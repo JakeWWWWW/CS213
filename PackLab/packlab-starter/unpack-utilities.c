@@ -140,7 +140,6 @@ void decrypt_data(uint8_t* input_data, size_t input_len,
   // Apply psuedorandom number with an XOR in little-endian order
   // Beware: input_data may be an odd number of bytes
 
-  // generate initial lfsr state
   uint16_t decrypted_data = lfsr_step(encryption_key);
 
   // loop through input_data
@@ -153,9 +152,9 @@ void decrypt_data(uint8_t* input_data, size_t input_len,
       uint8_t lfsr_1 = (uint8_t)(decrypted_data & 0x00FF);
 
       // edge case: odd number of bytes, last byte
-      if (i == input_len && i % 2 == 0) {
+      if (i == output_len - 1 && input_len % 2 != 0) {
 
-        output_data[i] =  lfsr_1 ^ input_data[i];
+        output_data[i] = lfsr_1 ^ input_data[i];
 
         break;
 
@@ -168,12 +167,12 @@ void decrypt_data(uint8_t* input_data, size_t input_len,
           output_data[i-1] =  lfsr_1 ^ input_data[i-1];
 
           // 'upper' byte from lfsr
-          uint8_t lfsr_2 = (uint8_t)((decrypted_data & 0xFF00) >> 4);
+          uint8_t lfsr_2 = (uint8_t)((decrypted_data & 0xFF00) >> 8);
 
           output_data[i] =  lfsr_2 ^ input_data[i];
           
           // next state
-          decrypted_data = lfsr_step(decrypted_data);
+         decrypted_data = lfsr_step(decrypted_data);
 
         }
 

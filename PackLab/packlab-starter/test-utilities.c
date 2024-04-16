@@ -124,10 +124,10 @@ int test_decryption(void) {
 
   // compare
 
-  if (decrypted_data != expected_output_data) {
+  for (size_t i = 0; i < input_len; i++) {
     // Test failed! Return 1 to signify failure
-    // printf("%hhu\n", decrypted_data[3]);
-    return 1;
+    if (decrypted_data[i] != expected_output_data[i])
+      return 1;
   }
 
   // Test succeeded! Return 0 to signify success
@@ -142,11 +142,11 @@ int test_decryption_edge(void) {
 
   size_t input_len = 1;
 
-  uint16_t encryption_key = 0x1337;
+  uint16_t encryption_key = 0x099B;
 
   // output data
 
-  uint8_t expected_output_data[] = {0xBA,};
+  uint8_t expected_output_data[] = {0xCD ^ 0x21,};
 
   size_t output_len = 1;
 
@@ -160,7 +160,7 @@ int test_decryption_edge(void) {
 
   if (decrypted_data[0] != expected_output_data[0]) {
     // Test failed! Return 1 to signify failure
-    printf("%hhu\n", decrypted_data[0]);
+    printf("%hhu\n", expected_output_data[0]);
     return 1;
   }
 
@@ -486,17 +486,17 @@ int main(void) {
     return 1;
   }
 
-  /* result = test_decryption();
+  result = test_decryption();
   if (result !=0){
     printf("ERROR: test_decryption failed\n");
     return 1;
-  } */
+  }
 
-  /* ( result = test_decryption_edge();
+  result = test_decryption_edge();
   if (result !=0){
     printf("ERROR: test_decryption_edge failed\n");
     return 1;
-  } */
+  }
 
   printf("All tests passed successfully!\n");
   return 0;
