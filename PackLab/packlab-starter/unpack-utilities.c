@@ -46,13 +46,14 @@ void parse_header(uint8_t* input_data, size_t input_len, packlab_config_t* confi
     config->is_valid=false;
     return;
   }
-  
+  config->header_len=4;
   //Decoding Flags
 
   //Compressed?
   uint8_t compressedMask = 0x80; //0b10000000
   if ((input_data[3] & compressedMask) == compressedMask){
     config->is_compressed=true;
+    config->header_len=20;
     if (input_len < 20 ){
       config->is_valid=false;
       return;
@@ -91,8 +92,10 @@ void parse_header(uint8_t* input_data, size_t input_len, packlab_config_t* confi
 
   //Pulling Checksum
   if (config->is_compressed && config->is_checksummed){
+    config->header_len=22;
     config->checksum_value = (input_data[20]<<8) + input_data[21];
   }else if (config->is_checksummed){
+    config->header_len=6;
     config->checksum_value = (input_data[4]<<8) + input_data[5];
   }
 
@@ -111,7 +114,6 @@ uint16_t calculate_checksum(uint8_t* input_data, size_t input_len) {
   }
   return checksum;
 
-  return 0;
 }
 //
 uint16_t lfsr_step(uint16_t oldstate) {

@@ -79,6 +79,7 @@ int main(int argc, char* argv[]) {
 
     // Validate checksum
     if (calc_checksum != config.checksum_value) {
+      printf("real checksum val: %x, Calculated checksum val %x\n", config.checksum_value, calc_checksum);
       error_and_exit("ERROR: checksum is invalid\n");
     }
   }
