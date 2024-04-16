@@ -100,6 +100,74 @@ int example_test(void) {
   return 0;
 }
 
+int test_decryption(void) {
+
+  // input data
+
+  uint8_t input_data[] = {0x60, 0x5A, 0xFF, 0xB7,};
+
+  size_t input_len = 4;
+
+  uint16_t encryption_key = 0x1337;
+
+  // output data
+
+  uint8_t expected_output_data[] = {0xFB, 0x53, 0x32, 0x33,};
+
+  size_t output_len = 4;
+
+  // test
+
+  uint8_t decrypted_data[4];
+  
+  decrypt_data(input_data, input_len, decrypted_data, output_len, encryption_key);
+
+  // compare
+
+  if (decrypted_data != expected_output_data) {
+    // Test failed! Return 1 to signify failure
+    // printf("%hhu\n", decrypted_data[3]);
+    return 1;
+  }
+
+  // Test succeeded! Return 0 to signify success
+  return 0;
+}
+
+int test_decryption_edge(void) {
+
+  // input data
+
+  uint8_t input_data[] = {0x21,};
+
+  size_t input_len = 1;
+
+  uint16_t encryption_key = 0x1337;
+
+  // output data
+
+  uint8_t expected_output_data[] = {0xBA,};
+
+  size_t output_len = 1;
+
+  // test
+
+  uint8_t decrypted_data[1];
+  
+  decrypt_data(input_data, input_len, decrypted_data, output_len, encryption_key);
+
+  // compare
+
+  if (decrypted_data[0] != expected_output_data[0]) {
+    // Test failed! Return 1 to signify failure
+    printf("%hhu\n", decrypted_data[0]);
+    return 1;
+  }
+
+  // Test succeeded! Return 0 to signify success
+  return 0;
+}
+
 int no_magic(void){
   packlab_config_t conf;
 
@@ -347,6 +415,18 @@ int main(void) {
     printf("ERROR: test_lfsr_step failed\n");
     return 1;
   }
+
+  /* result = test_decryption();
+  if (result !=0){
+    printf("ERROR: test_decryption failed\n");
+    return 1;
+  } */
+
+  /* ( result = test_decryption_edge();
+  if (result !=0){
+    printf("ERROR: test_decryption_edge failed\n");
+    return 1;
+  } */
 
   printf("All tests passed successfully!\n");
   return 0;
