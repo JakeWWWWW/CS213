@@ -1,5 +1,6 @@
 No one expects the Spanish Inquisition!
 0 1 1 2 3 5
 2 d 550
-8 1
+8 1 DrEvil
 71=657
+5 4 2 6 3 1
