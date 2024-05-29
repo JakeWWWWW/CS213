@@ -30,4 +30,4 @@ timing overhead is at least 18 cycles
 Analysis took 39686686942 cycles (14.210119 seconds) by cycle count, timing overhead=18 cycles
 Note that cycle count only makes sense if the thread stayed on one core
 Analysis took 15.300106 seconds by basic timing
-no aliens
+no aliens 
