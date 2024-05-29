@@ -1,0 +1,33 @@
+[lza6041@moore setilab-handout]$ ./band_scan bin alien_msg.sig 400000 32 10
+type:     Binary
+file:     alien_msg.sig
+Fs:       400000.000000 Hz
+order:    32
+bands:    10
+Load or map file
+Read 12000000 samples
+Removing DC component of -0.000372
+signal average power:     1.904742
+    0             0.000100 to         19999.999900 Hz:             0.004196 *(meh)
+    1         20000.000100 to         39999.999900 Hz:             0.004371 *(meh)
+    2         40000.000100 to         59999.999900 Hz:             0.004125 *(meh)
+    3         60000.000100 to         79999.999900 Hz:             0.000106 *(meh)
+    4         80000.000100 to         99999.999900 Hz:             0.000075 *(meh)
+    5        100000.000100 to        119999.999900 Hz:             0.033854 **(meh)
+    6        120000.000100 to        139999.999900 Hz:             1.016231 ****************************************(WOW)
+    7        140000.000100 to        159999.999900 Hz:             0.033920 **(meh)
+    8        160000.000100 to        179999.999900 Hz:             0.000075 *(meh)
+    9        180000.000100 to        199999.999900 Hz:             0.000058 *(meh)
+Resource usages:
+User time        15.106473 seconds
+System time      0.079356 seconds
+Page faults      22435
+Page swaps       0
+Blocks of I/O    0
+Signals caught   0
+Context switches 107
+timing overhead is at least 18 cycles
+Analysis took 40144221832 cycles (14.373942 seconds) by cycle count, timing overhead=18 cycles
+Note that cycle count only makes sense if the thread stayed on one core
+Analysis took 15.476496 seconds by basic timing
+POSSIBLE ALIENS 120000.000100-139999.999900 HZ (CENTER 130000.000000 HZ)
